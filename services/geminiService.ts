@@ -45,13 +45,11 @@ export const generateLiveCommentary = async (candidates: Candidate[]): Promise<s
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
     });
     return response.text || "目前戰況非常激烈！大家趕快評分！";
   } catch (error) {
-    // 靜默失敗，不讓錯誤影響前端
-    // console.error("Gemini commentary failed:", error); 
     return "現場氣氛嗨到最高點！請投下您神聖的分數！";
   }
 };
