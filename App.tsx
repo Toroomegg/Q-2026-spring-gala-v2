@@ -74,6 +74,7 @@ const VotePage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGlobalTestMode, setIsGlobalTestMode] = useState(false);
   const [isVotingOpen, setIsVotingOpen] = useState(true);
+  const [isConfirmingSubmit, setIsConfirmingSubmit] = useState(false);
 
   useEffect(() => {
     voteService.fetchLatestData();
@@ -95,8 +96,18 @@ const VotePage: React.FC = () => {
 
   const isAllSelected = selections.SINGING && selections.POPULARITY && selections.COSTUME;
 
-  const handleSubmitAll = async () => {
+  const getCandidateName = (id: string | null) => {
+    if (!id) return "未選擇";
+    return candidates.find(c => c.id === id)?.name || "未知";
+  };
+
+  const handleSubmitAll = () => {
       if (!isAllSelected) return;
+      setIsConfirmingSubmit(true);
+  };
+
+  const executeSubmit = async () => {
+      setIsConfirmingSubmit(false);
       setIsSubmitting(true);
       const result = await voteService.submitVoteBatch(selections as any);
       if (result.success) {
@@ -128,15 +139,24 @@ const VotePage: React.FC = () => {
               <div className="glass-panel p-8 rounded-3xl text-center max-w-md border border-green-500/50 shadow-2xl animate-scale-up">
                   <div className="text-6xl mb-4">✅</div>
                   <h1 className="text-3xl font-black text-white mb-2">投票成功！</h1>
-                  <p className="text-slate-300">感謝您的參與，祝您中大獎！</p>
+                  <p className="text-slate-300">感謝您的參與，一起為我們喝采！</p>
               </div>
           </div>
       );
   }
 
+  const confirmationMessage = `確認提交以下選擇嗎？\n\n🎤 金嗓歌王：${getCandidateName(selections.SINGING)}\n💖 最佳人氣：${getCandidateName(selections.POPULARITY)}\n🎭 最佳造型：${getCandidateName(selections.COSTUME)}\n\n送出後將無法更改！`;
+
   return (
-    <div className="min-h-screen pb-32 px-2 md:px-4 relative z-10 pt-4">
+    <div className="min-h-screen pb-48 px-2 md:px-4 relative z-10 pt-4">
       <Header subtitle="歌唱大賽評分系統" size="small" />
+      <ConfirmModal 
+          isOpen={isConfirmingSubmit} 
+          title="最後確認" 
+          message={confirmationMessage} 
+          onConfirm={executeSubmit} 
+          onCancel={() => setIsConfirmingSubmit(false)} 
+      />
       <div className="max-w-5xl mx-auto">
           {[
               { cat: VoteCategory.SINGING, title: "Group A: 金嗓歌王獎", sub: "唱功最厲害的參賽者", color: "border-yellow-500/30", icon: "🎤" },
@@ -179,7 +199,6 @@ const VotePage: React.FC = () => {
                                         <h3 className="font-bold text-white text-lg truncate">{c.name}</h3>
                                         <p className="text-slate-400 text-sm truncate mt-1">🎵 {c.song}</p>
                                     </div>
-                                    {/* 右側頭像圖示：確保不帶播放按鈕 */}
                                     <div className="shrink-0 w-12 h-12 rounded-full border-2 border-yellow-500/40 p-0.5 bg-slate-900 overflow-hidden relative shadow-lg">
                                         {c.image ? <img src={c.image} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-slate-800" />}
                                     </div>
@@ -191,8 +210,26 @@ const VotePage: React.FC = () => {
             </div>
           ))}
       </div>
+      
+      {/* 底部固定欄位：顯示選擇摘要與送出按鈕 */}
       <div className="fixed bottom-0 left-0 w-full bg-slate-900/95 backdrop-blur-md border-t border-slate-700 p-4 z-50 shadow-2xl">
-          <button onClick={handleSubmitAll} disabled={!isAllSelected || isSubmitting} className={`w-full max-w-xl mx-auto block py-4 rounded-xl font-black text-xl transition-all ${isAllSelected ? 'bg-gradient-to-r from-yellow-500 to-red-600 text-white shadow-lg' : 'bg-slate-700 text-slate-500'}`}>
+          <div className="max-w-xl mx-auto mb-3">
+              <div className="grid grid-cols-3 gap-2">
+                  <div className={`p-2 rounded-lg text-center border ${selections.SINGING ? 'border-yellow-500/50 bg-yellow-500/10' : 'border-slate-700 bg-slate-800/50'}`}>
+                      <div className="text-[10px] text-slate-500 font-bold mb-0.5 uppercase">金嗓歌王</div>
+                      <div className="text-xs font-black text-white truncate">{getCandidateName(selections.SINGING)}</div>
+                  </div>
+                  <div className={`p-2 rounded-lg text-center border ${selections.POPULARITY ? 'border-pink-500/50 bg-pink-500/10' : 'border-slate-700 bg-slate-800/50'}`}>
+                      <div className="text-[10px] text-slate-500 font-bold mb-0.5 uppercase">最佳人氣</div>
+                      <div className="text-xs font-black text-white truncate">{getCandidateName(selections.POPULARITY)}</div>
+                  </div>
+                  <div className={`p-2 rounded-lg text-center border ${selections.COSTUME ? 'border-purple-500/50 bg-purple-500/10' : 'border-slate-700 bg-slate-800/50'}`}>
+                      <div className="text-[10px] text-slate-500 font-bold mb-0.5 uppercase">最佳造型</div>
+                      <div className="text-xs font-black text-white truncate">{getCandidateName(selections.COSTUME)}</div>
+                  </div>
+              </div>
+          </div>
+          <button onClick={handleSubmitAll} disabled={!isAllSelected || isSubmitting} className={`w-full max-w-xl mx-auto block py-4 rounded-xl font-black text-xl transition-all ${isAllSelected ? 'bg-gradient-to-r from-yellow-500 to-red-600 text-white shadow-lg active:scale-95' : 'bg-slate-700 text-slate-500'}`}>
               {isSubmitting ? '處理中...' : (isAllSelected ? '確認送出三票' : '請完成所有選擇')}
           </button>
       </div>
@@ -208,14 +245,14 @@ const PodiumItem: React.FC<{ candidate?: Candidate; rank: 1 | 2 | 3; score: numb
     if (!candidate) return <div className={`flex flex-col items-center justify-end w-full md:w-1/3 ${orderClass} opacity-50`}><div className={`w-full ${heightClass} bg-slate-800/50 rounded-t-2xl border-t-4 border-slate-700 flex items-center justify-center`}><span className="text-4xl opacity-20">?</span></div></div>;
     return (
         <div className={`flex flex-col items-center justify-end w-full md:w-1/3 relative group ${orderClass} ${delay} animate-fade-in-up`}>
-            <div className={`relative z-20 mb-[-30px] transition-transform duration-500 group-hover:-translate-y-2`}>
+            <div className={`relative z-20 mb-[-25px] transition-transform duration-500 group-hover:-translate-y-2`}>
                 <div className={`rounded-full overflow-hidden border-4 ${borderColor} bg-slate-900 ${isWinner ? 'w-24 h-24 md:w-36 md:h-36 shadow-xl' : 'w-20 h-20 md:w-24 md:h-24 shadow-lg'}`}>
                      {candidate.image ? <img src={candidate.image} className="w-full h-full object-cover" onError={handleImageError} /> : <div className="w-full h-full bg-slate-700 flex items-center justify-center text-2xl">?</div>}
                 </div>
                 <div className={`absolute -bottom-2 -right-2 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-base md:text-xl font-bold border-2 shadow-lg z-30 ${badgeColor}`}>{rank}</div>
-                {isWinner && <div className="absolute -top-16 md:-top-24 left-1/2 -translate-x-1/2 text-5xl md:text-7xl animate-bounce drop-shadow-[0_0_20px_rgba(234,179,8,1)]">👑</div>}
+                {isWinner && <div className="absolute -top-14 md:-top-20 left-1/2 -translate-x-1/2 text-5xl md:text-7xl animate-bounce drop-shadow-[0_0_20px_rgba(234,179,8,1)]">👑</div>}
             </div>
-            <div className={`w-full ${heightClass} rounded-t-3xl border-t-2 ${borderColor} bg-slate-800/90 backdrop-blur-md flex flex-col items-center pt-10 md:pt-14 pb-4 px-2 text-center shadow-2xl`}>
+            <div className={`w-full ${heightClass} rounded-t-3xl border-t-2 ${borderColor} bg-slate-800/90 backdrop-blur-md flex flex-col items-center pt-8 md:pt-12 pb-4 px-2 text-center shadow-2xl`}>
                 <h3 className={`font-bold text-white truncate px-2 mb-1 ${isWinner ? 'text-xl md:text-2xl' : 'text-lg md:text-xl'}`}>{candidate.name}</h3>
                 <p className="text-slate-400 text-xs md:text-sm mb-3 truncate px-2">{candidate.song}</p>
                 <div className="mt-auto">
@@ -289,41 +326,49 @@ const ResultsPage: React.FC = () => {
       <ConfirmModal isOpen={confirmTab.isOpen} title="切換獎項" message={`確定切換到「${confirmTab.target === VoteCategory.SINGING ? '金嗓歌王' : confirmTab.target === VoteCategory.POPULARITY ? '最佳人氣' : '最佳造型'}」嗎？`} onConfirm={() => { if (confirmTab.target) setActiveTab(confirmTab.target); setConfirmTab({isOpen: false, target: null}); }} onCancel={() => setConfirmTab({isOpen: false, target: null})} />
       <div className="relative z-10 px-4 py-6 max-w-7xl mx-auto flex flex-col h-full">
         <Header size="small" subtitle="即時戰況" />
-        <div className="flex justify-center gap-2 mb-12 sticky top-4 z-[100] mt-4">
+        {/* TAB 與排名之間的間隔優化：將 mb-12 改為 mb-4 */}
+        <div className="flex justify-center gap-2 mb-4 sticky top-4 z-[100] mt-2">
             {[VoteCategory.SINGING, VoteCategory.POPULARITY, VoteCategory.COSTUME].map(cat => (
                 <button key={cat} onClick={() => { if (cat !== activeTab) setConfirmTab({ isOpen: true, target: cat }); }} className={`px-4 py-3 rounded-xl font-bold text-sm md:text-xl transition-all border-2 ${activeTab === cat ? 'bg-slate-800 text-white border-yellow-500 shadow-xl transform -translate-y-1' : 'bg-slate-900/80 backdrop-blur text-slate-500 border-slate-700'}`}>
                     {cat === VoteCategory.SINGING ? '金嗓歌王' : cat === VoteCategory.POPULARITY ? '最佳人氣' : '最佳造型'}
                 </button>
             ))}
         </div>
-        {/* 開票區域：增加頂部間距 180px+ 防止皇冠遮擋 */}
-        <div className="w-full max-w-6xl mx-auto pt-44 md:pt-60"> 
+        {/* 排名區域佈局優化：大幅縮減 pt 從 44/60 改為 16/24 */}
+        <div className="w-full max-w-6xl mx-auto pt-16 md:pt-24"> 
             {activeTab === VoteCategory.SINGING ? (
-                <div className="space-y-20">
-                    <div className="flex flex-col md:flex-row items-end justify-center gap-4 md:gap-8 min-h-[400px]">
+                <div className="space-y-12">
+                    <div className="flex flex-col md:flex-row items-end justify-center gap-4 md:gap-8 min-h-[350px]">
                         <PodiumItem candidate={sortedCandidates[1]} rank={2} score={sortedCandidates[1] ? getScore(sortedCandidates[1]) : 0} delay="delay-200" />
                         <PodiumItem candidate={sortedCandidates[0]} rank={1} score={sortedCandidates[0] ? getScore(sortedCandidates[0]) : 0} />
                         <PodiumItem candidate={sortedCandidates[2]} rank={3} score={sortedCandidates[2] ? getScore(sortedCandidates[2]) : 0} delay="delay-300" />
                     </div>
-                    {/* 金嗓歌王：額外顯示 4、5 名 */}
-                    <div className="max-w-4xl mx-auto space-y-4">
-                        <div className="flex items-center gap-4 mb-8">
-                          <div className="h-px bg-slate-700 flex-1"></div>
-                          <h4 className="text-slate-500 font-black tracking-[0.3em] uppercase text-xs">Honorary Rankings</h4>
-                          <div className="h-px bg-slate-700 flex-1"></div>
-                        </div>
-                        {sortedCandidates.slice(3, 5).map((c, idx) => (
-                            <div key={c.id} className="bg-slate-800/60 backdrop-blur border border-slate-700 rounded-xl p-4 flex items-center animate-fade-in-up">
-                                <div className="w-12 text-2xl font-black text-slate-500">#{idx + 4}</div>
-                                <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-slate-600 bg-slate-900 mx-4">{c.image && <img src={c.image} className="w-full h-full object-cover" />}</div>
-                                <div className="flex-1 min-w-0 pr-2">
-                                    <h4 className="font-bold text-white text-lg truncate">{c.name}</h4>
-                                    <div className="text-slate-400 text-sm truncate">🎵 {c.song}</div>
-                                </div>
-                                <div className="text-right pl-4 border-l border-white/10"><div className="text-2xl font-bold text-white font-mono">{getScore(c)}</div><div className="text-[10px] text-slate-500 uppercase font-bold">pts</div></div>
+                    {/* 金嗓歌王：專屬顯示 4、5 名區塊 */}
+                    {sortedCandidates.length > 3 && (
+                        <div className="max-w-4xl mx-auto space-y-4 pt-4">
+                            <div className="flex items-center gap-4 mb-6">
+                              <div className="h-px bg-slate-700 flex-1"></div>
+                              <h4 className="text-yellow-500 font-black tracking-[0.4em] uppercase text-sm md:text-base drop-shadow-sm">優選榮譽榜 (第 4, 5 名)</h4>
+                              <div className="h-px bg-slate-700 flex-1"></div>
                             </div>
-                        ))}
-                    </div>
+                            <div className="grid grid-cols-1 gap-4">
+                                {sortedCandidates.slice(3, 5).map((c, idx) => (
+                                    <div key={c.id} className="bg-slate-800/60 backdrop-blur-md border border-slate-700/80 rounded-2xl p-4 flex items-center animate-fade-in-up shadow-xl transform transition-transform hover:scale-[1.01]">
+                                        <div className="w-12 text-3xl font-black text-slate-500 flex justify-center items-center">#{idx + 4}</div>
+                                        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-slate-600 bg-slate-900 mx-4 shadow-inner">{c.image && <img src={c.image} className="w-full h-full object-cover" />}</div>
+                                        <div className="flex-1 min-w-0 pr-2">
+                                            <h4 className="font-bold text-white text-xl truncate">{c.name}</h4>
+                                            <div className="text-slate-400 text-sm truncate font-medium mt-0.5">🎵 {c.song}</div>
+                                        </div>
+                                        <div className="text-right pl-6 border-l border-white/10">
+                                            <div className="text-3xl font-black text-white font-mono leading-tight">{getScore(c)}</div>
+                                            <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">points</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             ) : (
                 <div className="max-w-4xl mx-auto space-y-4">
@@ -468,7 +513,7 @@ const AdminPage: React.FC = () => {
                                 <span className={`font-bold ${!globalTestMode ? 'text-blue-400' : 'text-slate-400'}`}>{!globalTestMode ? '正式模式' : '測試模式'}</span>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" className="sr-only peer" checked={globalTestMode} onChange={() => voteService.setGlobalTestMode(!globalTestMode)} />
+                                <input type="checkbox" className="sr-only peer" checked={globalTestMode} onChange={() => setGlobalTestMode(!globalTestMode)} />
                                 <div className="w-14 h-7 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
                             </label>
                         </div>
