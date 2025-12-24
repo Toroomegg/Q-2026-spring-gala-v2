@@ -76,6 +76,13 @@ const VotePage: React.FC = () => {
   const [isVotingOpen, setIsVotingOpen] = useState(true);
   const [isConfirmingSubmit, setIsConfirmingSubmit] = useState(false);
 
+  // 用於跳轉的 Refs
+  const sectionRefs = {
+      [VoteCategory.SINGING]: useRef<HTMLDivElement>(null),
+      [VoteCategory.POPULARITY]: useRef<HTMLDivElement>(null),
+      [VoteCategory.COSTUME]: useRef<HTMLDivElement>(null)
+  };
+
   useEffect(() => {
     voteService.fetchLatestData();
     const sync = () => {
@@ -99,6 +106,15 @@ const VotePage: React.FC = () => {
   const getCandidateName = (id: string | null) => {
     if (!id) return "未選擇";
     return candidates.find(c => c.id === id)?.name || "未知";
+  };
+
+  const scrollToCategory = (cat: VoteCategory) => {
+      const ref = sectionRefs[cat];
+      if (ref && ref.current) {
+          const yOffset = -100; // 預留一點空間給 Sticky Header
+          const y = ref.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+      }
   };
 
   const handleSubmitAll = () => {
@@ -139,7 +155,7 @@ const VotePage: React.FC = () => {
               <div className="glass-panel p-8 rounded-3xl text-center max-w-md border border-green-500/50 shadow-2xl animate-scale-up">
                   <div className="text-6xl mb-4">✅</div>
                   <h1 className="text-3xl font-black text-white mb-2">投票成功！</h1>
-                  <p className="text-slate-300">感謝您的參與，一起為我們喝采！</p>
+                  <p className="text-slate-300">感謝您的參與，祝您中大獎！</p>
               </div>
           </div>
       );
@@ -163,7 +179,7 @@ const VotePage: React.FC = () => {
               { cat: VoteCategory.POPULARITY, title: "Group B: 最佳人氣獎", sub: "氣氛最嗨的表演", color: "border-pink-500/30", icon: "💖" },
               { cat: VoteCategory.COSTUME, title: "Group C: 最佳造型獎", sub: "服裝造型最用心的參賽者", color: "border-purple-500/30", icon: "🎭" }
           ].map(section => (
-            <div key={section.cat} className={`mb-12 p-3 md:p-6 rounded-3xl border-2 ${section.color} bg-slate-900/50 backdrop-blur-sm`}>
+            <div key={section.cat} ref={sectionRefs[section.cat]} className={`mb-12 p-3 md:p-6 rounded-3xl border-2 ${section.color} bg-slate-900/50 backdrop-blur-sm scroll-mt-24`}>
                 <div className="flex items-center justify-between gap-2 mb-6 sticky top-0 bg-slate-900/95 p-3 md:p-4 rounded-xl z-20 shadow-lg border-b border-white/10">
                     <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
                         <span className="text-2xl md:text-4xl shrink-0">{section.icon}</span>
@@ -187,6 +203,7 @@ const VotePage: React.FC = () => {
                         return (
                             <div key={c.id} onClick={() => handleSelect(section.cat, c.id)} className={`relative rounded-2xl cursor-pointer transition-all duration-200 overflow-hidden ${isSelected ? 'ring-4 ring-green-500 scale-[1.02] shadow-2xl' : 'border border-slate-700 bg-slate-800'}`}>
                                 <div className="h-40 w-full bg-slate-700 relative overflow-hidden">
+                                    {/* 大圖示：讀取 image 欄位 */}
                                     {c.image && <img src={c.image} className="w-full h-full object-cover" />}
                                     {isSelected && (
                                         <div className="absolute inset-0 bg-green-500/30 flex items-center justify-center animate-fade-in">
@@ -199,8 +216,17 @@ const VotePage: React.FC = () => {
                                         <h3 className="font-bold text-white text-lg truncate">{c.name}</h3>
                                         <p className="text-slate-400 text-sm truncate mt-1">🎵 {c.song}</p>
                                     </div>
-                                    <div className="shrink-0 w-12 h-12 rounded-full border-2 border-yellow-500/40 p-0.5 bg-slate-900 overflow-hidden relative shadow-lg">
-                                        {c.image ? <img src={c.image} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-slate-800" />}
+                                    {/* 小圖示：改為讀取 videoLink 欄位 */}
+                                    <div className="shrink-0 w-14 h-14 rounded-full border-[3px] border-slate-900 bg-black p-0.5 overflow-hidden relative shadow-[0_0_10px_rgba(0,0,0,0.8)] flex items-center justify-center">
+                                        <div className={`w-full h-full rounded-full overflow-hidden border border-slate-800/50 ${isSelected ? 'animate-[spin_6s_linear_infinite]' : ''}`}>
+                                            {c.videoLink ? <img src={c.videoLink} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-slate-800" />}
+                                        </div>
+                                        {/* 唱片中心點裝飾 */}
+                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                            <div className="w-2 h-2 bg-slate-400 rounded-full border border-black shadow-inner"></div>
+                                        </div>
+                                        {/* 唱片反光效果 */}
+                                        <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent opacity-30 pointer-events-none rounded-full"></div>
                                     </div>
                                 </div>
                             </div>
@@ -215,16 +241,22 @@ const VotePage: React.FC = () => {
       <div className="fixed bottom-0 left-0 w-full bg-slate-900/95 backdrop-blur-md border-t border-slate-700 p-4 z-50 shadow-2xl">
           <div className="max-w-xl mx-auto mb-3">
               <div className="grid grid-cols-3 gap-2">
-                  <div className={`p-2 rounded-lg text-center border ${selections.SINGING ? 'border-yellow-500/50 bg-yellow-500/10' : 'border-slate-700 bg-slate-800/50'}`}>
-                      <div className="text-[10px] text-slate-500 font-bold mb-0.5 uppercase">金嗓歌王</div>
+                  <div 
+                    onClick={() => scrollToCategory(VoteCategory.SINGING)}
+                    className={`p-2 rounded-lg text-center border cursor-pointer transition-all hover:scale-105 active:scale-95 ${selections.SINGING ? 'border-yellow-500/50 bg-yellow-500/10' : 'border-slate-700 bg-slate-800/50'}`}>
+                      <div className="text-[10px] text-slate-500 font-bold mb-0.5 uppercase">🎤 金嗓歌王</div>
                       <div className="text-xs font-black text-white truncate">{getCandidateName(selections.SINGING)}</div>
                   </div>
-                  <div className={`p-2 rounded-lg text-center border ${selections.POPULARITY ? 'border-pink-500/50 bg-pink-500/10' : 'border-slate-700 bg-slate-800/50'}`}>
-                      <div className="text-[10px] text-slate-500 font-bold mb-0.5 uppercase">最佳人氣</div>
+                  <div 
+                    onClick={() => scrollToCategory(VoteCategory.POPULARITY)}
+                    className={`p-2 rounded-lg text-center border cursor-pointer transition-all hover:scale-105 active:scale-95 ${selections.POPULARITY ? 'border-pink-500/50 bg-pink-500/10' : 'border-slate-700 bg-slate-800/50'}`}>
+                      <div className="text-[10px] text-slate-500 font-bold mb-0.5 uppercase">💖 最佳人氣</div>
                       <div className="text-xs font-black text-white truncate">{getCandidateName(selections.POPULARITY)}</div>
                   </div>
-                  <div className={`p-2 rounded-lg text-center border ${selections.COSTUME ? 'border-purple-500/50 bg-purple-500/10' : 'border-slate-700 bg-slate-800/50'}`}>
-                      <div className="text-[10px] text-slate-500 font-bold mb-0.5 uppercase">最佳造型</div>
+                  <div 
+                    onClick={() => scrollToCategory(VoteCategory.COSTUME)}
+                    className={`p-2 rounded-lg text-center border cursor-pointer transition-all hover:scale-105 active:scale-95 ${selections.COSTUME ? 'border-purple-500/50 bg-purple-500/10' : 'border-slate-700 bg-slate-800/50'}`}>
+                      <div className="text-[10px] text-slate-500 font-bold mb-0.5 uppercase">🎭 最佳造型</div>
                       <div className="text-xs font-black text-white truncate">{getCandidateName(selections.COSTUME)}</div>
                   </div>
               </div>
@@ -321,10 +353,10 @@ const ResultsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white overflow-hidden relative pb-40">
+    <div className="min-h-screen bg-slate-900 text-white relative pb-60 overflow-y-auto overflow-x-hidden">
       <Fireworks />
       <ConfirmModal isOpen={confirmTab.isOpen} title="切換獎項" message={`確定切換到「${confirmTab.target === VoteCategory.SINGING ? '金嗓歌王' : confirmTab.target === VoteCategory.POPULARITY ? '最佳人氣' : '最佳造型'}」嗎？`} onConfirm={() => { if (confirmTab.target) setActiveTab(confirmTab.target); setConfirmTab({isOpen: false, target: null}); }} onCancel={() => setConfirmTab({isOpen: false, target: null})} />
-      <div className="relative z-10 px-4 py-6 max-w-7xl mx-auto flex flex-col h-full">
+      <div className="relative z-10 px-4 py-6 max-w-7xl mx-auto flex flex-col">
         <Header size="small" subtitle="即時戰況" />
         {/* TAB 與排名之間的間隔優化：將 mb-12 改為 mb-4 */}
         <div className="flex justify-center gap-2 mb-4 sticky top-4 z-[100] mt-2">
