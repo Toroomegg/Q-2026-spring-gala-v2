@@ -147,6 +147,129 @@ const SpotlightItem: React.FC<{ candidate?: Candidate; rank: 1 | 2 | 3 | string;
 
 // --- Pages ---
 
+const GamePage: React.FC = () => {
+    const [candidates, setCandidates] = useState<Candidate[]>([]);
+
+    useEffect(() => {
+        voteService.startPolling();
+        const unsub = voteService.subscribe(() => setCandidates(voteService.getCandidates()));
+        return () => unsub();
+    }, []);
+
+    return (
+        <div className="h-screen w-full flex flex-col overflow-hidden bg-slate-950 relative">
+            <Fireworks />
+            
+            <style>
+                {`
+                @keyframes marquee-infinite-scroll {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                .animate-marquee-infinite {
+                    display: flex;
+                    width: max-content;
+                    /* 調整為慢速捲動: 使用無縫循環，將內容重複渲染兩次 */
+                    animation: marquee-infinite-scroll 60s linear infinite;
+                    will-change: transform;
+                }
+                `}
+            </style>
+            
+            {/* 上半部：Logo (需求: 站畫面 1/5) + 遊戲規則 */}
+            <div className="flex-1 flex flex-col items-center justify-start p-4 md:p-8 relative z-10 overflow-hidden">
+                {/* 需求 1: 頂部 Logo 視覺強化 (站畫面高度 20vh) */}
+                <div className="h-[20vh] w-full flex items-center justify-center mb-6 animate-fade-in-down">
+                    <img 
+                        src="https://storage.googleapis.com/example-eggy-addressable/DownloadFile/2026Slogan.png" 
+                        alt="Tail Logo" 
+                        className="h-full max-w-full object-contain drop-shadow-[0_0_50px_rgba(234,179,8,0.7)]"
+                        onError={handleImageError}
+                    />
+                </div>
+
+                <div className="w-full max-w-5xl glass-panel rounded-[4rem] p-8 md:p-12 border-2 border-yellow-500/30 shadow-[0_0_80px_rgba(234,179,8,0.2)]">
+                    <div className="text-center mb-8">
+                        <h2 className="text-3xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-100 via-yellow-400 to-yellow-600 tracking-tighter mb-2">🎤 互動小遊戲：接唱挑戰賽</h2>
+                        <div className="h-1.5 w-48 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto"></div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div className="space-y-6">
+                            <h3 className="text-2xl font-black text-yellow-500 border-l-4 border-yellow-500 pl-4">📜 遊戲規則</h3>
+                            <ul className="space-y-4 text-lg md:text-2xl font-bold text-white/90 leading-relaxed">
+                                <li className="flex items-start gap-3">
+                                    <span className="text-yellow-500">●</span>
+                                    <span>主持人抽出一位 <span className="text-yellow-400 underline decoration-2">主桌主管</span></span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <span className="text-yellow-500">●</span>
+                                    <span>主持人先唱歌曲前二句，再由主管接唱 <span className="text-yellow-400">(至少二句)</span></span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <span className="text-yellow-500">●</span>
+                                    <span>如果主管挑戰失敗，<span className="text-red-500 font-black">捐贈獎金 3000 元</span></span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <span className="text-yellow-500">●</span>
+                                    <span>主管可挑選現場一位同仁接唱，成功者獲贈該筆獎金！</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-slate-900/80 rounded-[3rem] p-6 border border-white/10 flex flex-col justify-center shadow-inner">
+                            <h3 className="text-xl font-black text-blue-400 mb-4 flex items-center gap-2">💡 舉例說明</h3>
+                            <div className="space-y-4 font-bold text-lg md:text-xl">
+                                <div className="bg-blue-600/20 p-4 rounded-3xl border-l-8 border-blue-500 shadow-md">
+                                    <p className="text-blue-300 text-xs mb-1 uppercase tracking-widest">主持人抽出：</p>
+                                    <p className="text-white text-2xl font-black">Baron Chen</p>
+                                </div>
+                                <div className="bg-slate-800 p-4 rounded-3xl border-l-8 border-slate-500">
+                                    <p className="text-slate-400 text-xs mb-1 uppercase tracking-widest">主持人唱：</p>
+                                    <p className="text-white">「三分天註定，七分可打拼...」</p>
+                                </div>
+                                <div className="bg-yellow-600/20 p-4 rounded-3xl border-l-8 border-yellow-500">
+                                    <p className="text-yellow-400 text-xs mb-1 uppercase tracking-widest">Baron 接唱：</p>
+                                    <p className="text-white text-xl animate-pulse">「愛拼才會贏！」 🎤✨</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* 需求: 上下區塊間隔空隙 (h-24 為充足空隙) */}
+            <div className="h-24 w-full flex-none"></div>
+
+            {/* 下半部：需求: 參賽者跑馬燈 (無限循環無縫 loop) */}
+            <div className="h-56 bg-slate-900/70 backdrop-blur-2xl border-t border-white/10 flex items-center relative z-20 overflow-hidden">
+                <div className="absolute top-0 left-0 h-full w-40 bg-gradient-to-r from-slate-950 to-transparent z-30 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 h-full w-40 bg-gradient-to-l from-slate-950 to-transparent z-30 pointer-events-none"></div>
+                
+                <div className="animate-marquee-infinite whitespace-nowrap">
+                    {/* 重複渲染名單兩次以實現無縫循環 */}
+                    {candidates.concat(candidates).map((c, idx) => (
+                        <div key={`${c.id}-${idx}`} className="inline-flex items-center gap-10 px-20 group transition-all">
+                            <div className="w-20 h-20 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-slate-700 shadow-[0_0_30px_rgba(255,255,255,0.1)] group-hover:border-yellow-500 group-hover:scale-110 transition-all">
+                                <img src={c.image || ""} className="w-full h-full object-cover" onError={handleImageError} />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-white font-black text-2xl md:text-5xl tracking-tight">{c.name}</span>
+                                <span className="text-yellow-500 font-bold text-sm md:text-2xl mt-1">🎵 {c.song}</span>
+                            </div>
+                            {/* 裝飾分隔符 */}
+                            <div className="mx-12 text-slate-800 text-8xl font-thin select-none">/</div>
+                        </div>
+                    ))}
+                    {candidates.length === 0 && (
+                        <div className="text-slate-600 font-black text-3xl uppercase tracking-widest px-40">名單載入中 Loading Stars...</div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const VotePage: React.FC = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [selections, setSelections] = useState<{[key in VoteCategory]: string | null}>({
@@ -831,6 +954,7 @@ const DevNav: React.FC = () => {
             </div>
             <Link to="/" onClick={() => setIsOpen(false)} className="px-4 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm font-bold text-white text-center">🗳️ 前台投票</Link>
             <Link to="/results" onClick={() => setIsOpen(false)} className="px-4 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm font-bold text-white text-center">📊 開票看板</Link>
+            <Link to="/game" onClick={() => setIsOpen(false)} className="px-4 py-3 bg-purple-700 hover:bg-purple-600 rounded-xl text-sm font-bold text-white text-center">🎮 互動遊戲</Link>
             <Link to="/backup" onClick={() => setIsOpen(false)} className="px-4 py-3 bg-orange-700 hover:bg-orange-600 rounded-xl text-sm font-bold text-white text-center">🆘 (手動模式)</Link>
             <Link to="/admin" onClick={() => setIsOpen(false)} className="px-4 py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-bold text-white text-center shadow-lg">⚙️ 後台管理</Link>
         </div>
@@ -844,6 +968,7 @@ const App: React.FC = () => (
         <Route path="/results" element={<ResultsPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/backup" element={<BackupPage />} />
+        <Route path="/game" element={<GamePage />} />
       </Routes>
       <DevNav />
     </HashRouter>
