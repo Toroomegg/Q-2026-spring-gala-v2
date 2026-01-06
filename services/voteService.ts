@@ -154,24 +154,47 @@ class VoteService {
   async runStressTest(totalUsers: number, onProgress: (count: number, log: string) => void) {
       if (this.isRunningStressTest) return;
       this.isRunningStressTest = true;
+      this.notifyListeners(); // 立即通知 UI 彈出進度視窗
+
       let usersProcessed = 0;
       for (let i = 0; i < totalUsers; i++) {
           if (!this.isRunningStressTest) break;
+          
           const cA = this.candidates[Math.floor(Math.random() * this.candidates.length)];
           const cB = this.candidates[Math.floor(Math.random() * this.candidates.length)];
           const cC = this.candidates[Math.floor(Math.random() * this.candidates.length)];
-          if (!cA) break;
+          
+          if (!cA) {
+              this.isRunningStressTest = false;
+              this.notifyListeners();
+              break;
+          }
+
           const votes = { [VoteCategory.SINGING]: cA.id, [VoteCategory.POPULARITY]: cB.id, [VoteCategory.COSTUME]: cC.id };
-          this.submitVoteBatch(votes, true).then(() => {
+          
+          // 提交背景任務
+          this.submitVoteBatch(votes, true).finally(() => {
               usersProcessed++;
-              onProgress(usersProcessed, `模擬用戶 #${usersProcessed} 投票完畢`);
+              onProgress(usersProcessed, `模擬用戶 #${usersProcessed} 投票任務已發送`);
+              
+              // 當最後一個任務完成，才真正關閉測試狀態
+              if (usersProcessed >= totalUsers) {
+                  this.isRunningStressTest = false;
+                  this.notifyListeners();
+              }
           });
+
+          // 稍微錯開背景任務的初始化時間，避免瞬間卡死瀏覽器執行緒
           if (i % 20 === 0) await new Promise(r => setTimeout(r, 20));
       }
-      this.isRunningStressTest = false;
+      
+      // 這裡不能設為 false，必須等 finally 裡面的進度追蹤
   }
 
-  stopStressTest() { this.isRunningStressTest = false; }
+  stopStressTest() { 
+      this.isRunningStressTest = false; 
+      this.notifyListeners();
+  }
 
   startPolling() {
     this.pollingSubscriberCount++;
