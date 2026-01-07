@@ -87,23 +87,23 @@ const CandidateDetailModal: React.FC<{
 };
 
 const Header: React.FC<{ subtitle?: string; size?: 'small' | 'large' }> = ({ subtitle, size = 'large' }) => (
-  <header className="text-center relative z-10 py-4 md:py-8 select-none animate-fade-in-down w-full">
-    <div className="flex justify-center mb-8 relative group">
+  <header className="text-center relative z-10 py-2 md:py-4 select-none animate-fade-in-down w-full">
+    <div className={`flex justify-center ${size === 'large' ? 'mb-8' : 'mb-2'} relative group`}>
         <div className="absolute inset-0 bg-yellow-500 blur-3xl opacity-20 rounded-full group-hover:opacity-30 transition-opacity"></div>
         <img 
             src="https://storage.googleapis.com/example-eggy-addressable/DownloadFile/2026Slogan.png" 
             alt="Spring Gala Logo" 
             onError={handleImageError}
-            className="h-40 md:h-56 object-contain drop-shadow-[0_0_25px_rgba(234,179,8,0.5)] relative z-10"
+            className={`${size === 'large' ? 'h-40 md:h-56' : 'h-16 md:h-24'} object-contain drop-shadow-[0_0_25px_rgba(234,179,8,0.5)] relative z-10`}
         />
     </div>
     <div className="inline-block relative px-4">
       <div className="absolute inset-0 bg-red-600 blur-2xl opacity-30 rounded-full animate-pulse"></div>
-      <h1 className={`font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-100 via-yellow-300 to-yellow-600 ${size === 'large' ? 'text-3xl md:text-5xl' : 'text-2xl md:text-4xl'} tracking-wider leading-tight text-glow`}>
+      <h1 className={`font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-100 via-yellow-300 to-yellow-600 ${size === 'large' ? 'text-3xl md:text-5xl' : 'text-xl md:text-3xl'} tracking-wider leading-tight text-glow`}>
         2026 廣達BU1,BU11,BU15<br className="md:hidden"/>尾牙晚宴
       </h1>
     </div>
-    {subtitle && <p className="text-yellow-100/90 mt-2 font-bold tracking-[0.2em] uppercase text-xs md:text-lg drop-shadow-md">&mdash; {subtitle} &mdash;</p>}
+    {subtitle && <p className="text-yellow-100/90 mt-1 font-bold tracking-[0.2em] uppercase text-xs md:text-sm drop-shadow-md">&mdash; {subtitle} &mdash;</p>}
   </header>
 );
 
@@ -116,30 +116,29 @@ const SpotlightItem: React.FC<{ candidate?: Candidate; rank: 1 | 2 | 3 | string;
     else if (rank === 3) { badgeEmoji = "🥉"; }
 
     return (
-        <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto py-10 animate-scale-up relative">
+        <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto py-4 animate-scale-up relative">
             {/* 背景光環 */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full border-2 border-dashed border-white/10 animate-spin-slow opacity-20"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[800px] md:h-[800px] rounded-full border border-white/5 animate-pulse opacity-10"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] md:w-[500px] md:h-[500px] rounded-full border-2 border-dashed border-white/10 animate-spin-slow opacity-20"></div>
             
-            <div className="relative z-10 text-center mb-8">
-                <span className={`text-4xl md:text-7xl block mb-2 drop-shadow-lg`}>{badgeEmoji}</span>
-                <h2 className="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-yellow-200 to-white uppercase tracking-[0.3em]">{title}</h2>
+            <div className="relative z-10 text-center mb-4">
+                <span className={`text-3xl md:text-5xl block mb-1 drop-shadow-lg`}>{badgeEmoji}</span>
+                <h2 className="text-xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-yellow-200 to-white uppercase tracking-[0.3em]">{title}</h2>
             </div>
 
-            <div className="relative z-20 mb-10">
-                <div className={`rounded-full overflow-hidden border-8 border-slate-800 bg-slate-900 w-48 h-48 md:w-80 md:h-80 shadow-[0_0_80px_rgba(255,255,255,0.1)] relative transition-transform duration-700 hover:scale-105`}>
+            <div className="relative z-20 mb-6">
+                <div className={`rounded-full overflow-hidden border-8 border-slate-800 bg-slate-900 w-40 h-40 md:w-64 md:h-64 shadow-[0_0_80px_rgba(255,255,255,0.1)] relative transition-transform duration-700 hover:scale-105`}>
                      <img src={candidate.image || "https://images.unsplash.com/photo-1516280440614-6697288d5d38?auto=format&fit=crop&w=800&q=80"} className="w-full h-full object-cover" onError={handleImageError} />
                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
                 </div>
-                <div className={`absolute -bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 border-4 border-slate-700 px-8 py-2 rounded-full shadow-2xl z-30 flex items-center gap-3`}>
-                    <span className="text-slate-400 font-bold uppercase text-xs tracking-widest">Score</span>
-                    <span className="text-3xl md:text-5xl font-black font-mono text-yellow-400">{score}</span>
+                <div className={`absolute -bottom-4 left-1/2 -translate-x-1/2 bg-slate-800 border-4 border-slate-700 px-6 py-1 rounded-full shadow-2xl z-30 flex items-center gap-3`}>
+                    <span className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">Score</span>
+                    <span className="text-2xl md:text-4xl font-black font-mono text-yellow-400">{score}</span>
                 </div>
             </div>
 
             <div className="text-center z-30 animate-fade-in-up delay-200">
-                <h3 className="text-4xl md:text-7xl font-black text-white mb-4 tracking-tighter drop-shadow-2xl">{candidate.name}</h3>
-                <p className="text-xl md:text-3xl text-yellow-100/80 font-bold italic">🎵 {candidate.song}</p>
+                <h3 className="text-3xl md:text-5xl font-black text-white mb-2 tracking-tighter drop-shadow-2xl">{candidate.name}</h3>
+                <p className="text-lg md:text-2xl text-yellow-100/80 font-bold italic">🎵 {candidate.song}</p>
             </div>
         </div>
     );
@@ -169,7 +168,6 @@ const GamePage: React.FC = () => {
                 .animate-marquee-infinite {
                     display: flex;
                     width: max-content;
-                    /* 調整為慢速捲動: 使用無縫循環，將內容重複渲染兩次 */
                     animation: marquee-infinite-scroll 60s linear infinite;
                     will-change: transform;
                 }
@@ -177,9 +175,9 @@ const GamePage: React.FC = () => {
             </style>
             
             {/* 上半部：Logo (需求: 站畫面 1/5) + 遊戲規則 */}
-            <div className="flex-1 flex flex-col items-center justify-start p-4 md:p-8 relative z-10 overflow-hidden">
-                {/* 需求 1: 頂部 Logo 視覺強化 (站畫面高度 20vh) */}
-                <div className="h-[20vh] w-full flex items-center justify-center mb-6 animate-fade-in-down">
+            <div className="flex-1 flex flex-col items-center justify-start p-2 md:p-4 relative z-10 overflow-hidden">
+                {/* 需求: 頂部 Logo 視覺強化 (站畫面高度 15vh 以適配 1080p) */}
+                <div className="h-[15vh] w-full flex items-center justify-center mb-4 animate-fade-in-down">
                     <img 
                         src="https://storage.googleapis.com/example-eggy-addressable/DownloadFile/2026Slogan.png" 
                         alt="Tail Logo" 
@@ -188,49 +186,46 @@ const GamePage: React.FC = () => {
                     />
                 </div>
 
-                <div className="w-full max-w-5xl glass-panel rounded-[4rem] p-8 md:p-12 border-2 border-yellow-500/30 shadow-[0_0_80px_rgba(234,179,8,0.2)]">
-                    <div className="text-center mb-8">
-                        <h2 className="text-3xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-100 via-yellow-400 to-yellow-600 tracking-tighter mb-2">🎤 互動小遊戲：接唱挑戰賽</h2>
-                        <div className="h-1.5 w-48 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto"></div>
+                <div className="w-full max-w-4xl glass-panel rounded-[3rem] p-6 md:p-8 border-2 border-yellow-500/30 shadow-[0_0_80px_rgba(234,179,8,0.1)]">
+                    <div className="text-center mb-6">
+                        <h2 className="text-2xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-100 via-yellow-400 to-yellow-600 tracking-tighter mb-1">🎤 互動小遊戲：接唱挑戰賽</h2>
+                        <div className="h-1 w-32 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto"></div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        <div className="space-y-6">
-                            <h3 className="text-2xl font-black text-yellow-500 border-l-4 border-yellow-500 pl-4">📜 遊戲規則</h3>
-                            <ul className="space-y-4 text-lg md:text-2xl font-bold text-white/90 leading-relaxed">
-                                <li className="flex items-start gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                            <h3 className="text-xl font-black text-yellow-500 border-l-4 border-yellow-500 pl-3">📜 遊戲規則</h3>
+                            <ul className="space-y-2 text-base md:text-xl font-bold text-white/90 leading-tight">
+                                <li className="flex items-start gap-2">
                                     <span className="text-yellow-500">●</span>
                                     <span>主持人抽出一位 <span className="text-yellow-400 underline decoration-2">主桌主管</span></span>
                                 </li>
-                                <li className="flex items-start gap-3">
+                                <li className="flex items-start gap-2">
                                     <span className="text-yellow-500">●</span>
-                                    <span>主持人先唱歌曲前二句，再由主管接唱 <span className="text-yellow-400">(至少二句)</span></span>
+                                    <span>主持人唱前二句，主管接唱 <span className="text-yellow-400">(至少二句)</span></span>
                                 </li>
-                                <li className="flex items-start gap-3">
+                                <li className="flex items-start gap-2">
                                     <span className="text-yellow-500">●</span>
-                                    <span>如果主管挑戰失敗，<span className="text-red-500 font-black">捐贈獎金 3000 元</span></span>
+                                    <span>挑戰失敗，<span className="text-red-500 font-black">捐贈獎金 3000 元</span></span>
                                 </li>
-                                <li className="flex items-start gap-3">
+                                <li className="flex items-start gap-2">
                                     <span className="text-yellow-500">●</span>
-                                    <span>主管可挑選現場一位同仁接唱，成功者獲贈該筆獎金！</span>
+                                    <span>主管可挑同仁接唱，成功者獲該獎金！</span>
                                 </li>
                             </ul>
                         </div>
 
-                        <div className="bg-slate-900/80 rounded-[3rem] p-6 border border-white/10 flex flex-col justify-center shadow-inner">
-                            <h3 className="text-xl font-black text-blue-400 mb-4 flex items-center gap-2">💡 舉例說明</h3>
-                            <div className="space-y-4 font-bold text-lg md:text-xl">
-                                <div className="bg-blue-600/20 p-4 rounded-3xl border-l-8 border-blue-500 shadow-md">
-                                    <p className="text-blue-300 text-xs mb-1 uppercase tracking-widest">主持人抽出：</p>
-                                    <p className="text-white text-2xl font-black">Baron Chen</p>
+                        <div className="bg-slate-900/80 rounded-[2rem] p-4 border border-white/10 flex flex-col justify-center shadow-inner">
+                            <h3 className="text-lg font-black text-blue-400 mb-2 flex items-center gap-2">💡 舉例</h3>
+                            <div className="space-y-2 font-bold text-sm md:text-lg">
+                                <div className="bg-blue-600/20 p-3 rounded-2xl border-l-4 border-blue-500">
+                                    <p className="text-white text-xl font-black">Baron Chen</p>
                                 </div>
-                                <div className="bg-slate-800 p-4 rounded-3xl border-l-8 border-slate-500">
-                                    <p className="text-slate-400 text-xs mb-1 uppercase tracking-widest">主持人唱：</p>
+                                <div className="bg-slate-800 p-3 rounded-2xl border-l-4 border-slate-500">
                                     <p className="text-white">「三分天註定，七分可打拼...」</p>
                                 </div>
-                                <div className="bg-yellow-600/20 p-4 rounded-3xl border-l-8 border-yellow-500">
-                                    <p className="text-yellow-400 text-xs mb-1 uppercase tracking-widest">Baron 接唱：</p>
-                                    <p className="text-white text-xl animate-pulse">「愛拼才會贏！」 🎤✨</p>
+                                <div className="bg-yellow-600/20 p-3 rounded-2xl border-l-4 border-yellow-500">
+                                    <p className="text-white text-lg animate-pulse">「愛拼才會贏！」 🎤✨</p>
                                 </div>
                             </div>
                         </div>
@@ -238,31 +233,29 @@ const GamePage: React.FC = () => {
                 </div>
             </div>
 
-            {/* 需求: 上下區塊間隔空隙 (h-24 為充足空隙) */}
-            <div className="h-24 w-full flex-none"></div>
+            {/* 需求: 縮減區塊間隙以適配 1080p */}
+            <div className="h-6 w-full flex-none"></div>
 
-            {/* 下半部：需求: 參賽者跑馬燈 (無限循環無縫 loop) */}
-            <div className="h-56 bg-slate-900/70 backdrop-blur-2xl border-t border-white/10 flex items-center relative z-20 overflow-hidden">
-                <div className="absolute top-0 left-0 h-full w-40 bg-gradient-to-r from-slate-950 to-transparent z-30 pointer-events-none"></div>
-                <div className="absolute top-0 right-0 h-full w-40 bg-gradient-to-l from-slate-950 to-transparent z-30 pointer-events-none"></div>
+            {/* 下半部：參賽者跑馬燈 */}
+            <div className="h-40 bg-slate-900/70 backdrop-blur-2xl border-t border-white/10 flex items-center relative z-20 overflow-hidden">
+                <div className="absolute top-0 left-0 h-full w-20 bg-gradient-to-r from-slate-950 to-transparent z-30 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 h-full w-20 bg-gradient-to-l from-slate-950 to-transparent z-30 pointer-events-none"></div>
                 
                 <div className="animate-marquee-infinite whitespace-nowrap">
-                    {/* 重複渲染名單兩次以實現無縫循環 */}
                     {candidates.concat(candidates).map((c, idx) => (
-                        <div key={`${c.id}-${idx}`} className="inline-flex items-center gap-10 px-20 group transition-all">
-                            <div className="w-20 h-20 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-slate-700 shadow-[0_0_30px_rgba(255,255,255,0.1)] group-hover:border-yellow-500 group-hover:scale-110 transition-all">
+                        <div key={`${c.id}-${idx}`} className="inline-flex items-center gap-6 px-12 group transition-all">
+                            <div className="w-16 h-16 md:w-24 md:h-24 rounded-full overflow-hidden border-4 border-slate-700 shadow-[0_0_20px_rgba(255,255,255,0.1)] group-hover:border-yellow-500 transition-all">
                                 <img src={c.image || ""} className="w-full h-full object-cover" onError={handleImageError} />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-white font-black text-2xl md:text-5xl tracking-tight">{c.name}</span>
-                                <span className="text-yellow-500 font-bold text-sm md:text-2xl mt-1">🎵 {c.song}</span>
+                                <span className="text-white font-black text-xl md:text-3xl tracking-tight">{c.name}</span>
+                                <span className="text-yellow-500 font-bold text-xs md:text-xl mt-0.5">🎵 {c.song}</span>
                             </div>
-                            {/* 裝飾分隔符 */}
-                            <div className="mx-12 text-slate-800 text-8xl font-thin select-none">/</div>
+                            <div className="mx-8 text-slate-800 text-6xl font-thin select-none">/</div>
                         </div>
                     ))}
                     {candidates.length === 0 && (
-                        <div className="text-slate-600 font-black text-3xl uppercase tracking-widest px-40">名單載入中 Loading Stars...</div>
+                        <div className="text-slate-600 font-black text-2xl px-40">Loading Stars...</div>
                     )}
                 </div>
             </div>
@@ -534,7 +527,6 @@ const ResultsPage: React.FC = () => {
     }
   };
 
-  // Explicitly typing rank as 1 | 2 | 3 to satisfy SpotlightItem's prop type
   const STEPS_CONFIG: { step: ResultStep; label: string; icon: string; cat: VoteCategory; rank: 1 | 2 | 3 }[] = [
       { step: ResultStep.COSTUME, label: "最佳造型", icon: "🎭", cat: VoteCategory.COSTUME, rank: 1 },
       { step: ResultStep.POPULARITY, label: "最佳人氣", icon: "💖", cat: VoteCategory.POPULARITY, rank: 1 },
@@ -579,34 +571,34 @@ const ResultsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white relative pb-60 overflow-y-auto overflow-x-hidden flex flex-col items-center">
+    <div className="min-h-screen bg-slate-900 text-white relative pb-32 overflow-hidden flex flex-col items-center">
       <Fireworks />
       <ConfirmModal isOpen={confirmStep.isOpen} title="切換環節" message={`確定揭曉下一階段嗎？`} onConfirm={() => { if (confirmStep.target) setActiveStep(confirmStep.target); setConfirmStep({isOpen: false, target: null}); }} onCancel={() => setConfirmStep({isOpen: false, target: null})} />
       
-      <div className="relative z-10 px-4 py-6 w-full max-w-7xl">
+      <div className="relative z-10 px-4 py-2 w-full max-w-7xl h-full flex flex-col">
         <Header size="small" subtitle="即時戰況揭曉" />
         
-        {/* 五階段導覽按鈕 */}
-        <div className="flex flex-wrap justify-center gap-2 mb-10 sticky top-4 z-[100] mt-2">
+        {/* 縮減導覽按鈕高度 */}
+        <div className="flex flex-wrap justify-center gap-2 mb-4 sticky top-2 z-[100]">
             {STEPS_CONFIG.map(s => (
-                <button key={s.step} onClick={() => { if (s.step !== activeStep) setConfirmStep({ isOpen: true, target: s.step }); }} className={`px-4 py-3 rounded-xl font-bold text-sm md:text-xl transition-all border-2 flex items-center gap-2 ${activeStep === s.step ? 'bg-yellow-600 text-white border-yellow-400 shadow-[0_0_20px_rgba(234,179,8,0.5)] transform -translate-y-1' : 'bg-slate-900/80 backdrop-blur text-slate-500 border-slate-800'}`}>
+                <button key={s.step} onClick={() => { if (s.step !== activeStep) setConfirmStep({ isOpen: true, target: s.step }); }} className={`px-3 py-1.5 rounded-xl font-bold text-xs md:text-sm transition-all border-2 flex items-center gap-2 ${activeStep === s.step ? 'bg-yellow-600 text-white border-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.4)]' : 'bg-slate-900/80 backdrop-blur text-slate-500 border-slate-800'}`}>
                     <span>{s.icon}</span>
-                    <span className="hidden md:inline">{s.label}</span>
+                    <span>{s.label}</span>
                 </button>
             ))}
         </div>
 
         {/* 聚光燈顯示區域 */}
-        <div className="w-full min-h-[60vh] flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center overflow-hidden">
             {current && <SpotlightItem candidate={current.candidate} rank={current.rank} score={current.score || 0} title={current.title} />}
         </div>
       </div>
 
       {/* 底部 AI 評語欄 */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900/90 backdrop-blur-md border-t-4 border-yellow-500 z-50 py-4 shadow-2xl">
-        <div className="max-w-7xl mx-auto px-4 flex items-center gap-6">
-            <div className="shrink-0 w-12 h-12 bg-yellow-600 rounded-full flex items-center justify-center text-3xl animate-bounce">🤖</div>
-            <p className="text-xl md:text-3xl font-black text-yellow-50 truncate italic tracking-tight">{commentary}</p>
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900/90 backdrop-blur-md border-t-2 border-yellow-500 z-50 py-3 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-4 flex items-center gap-4">
+            <div className="shrink-0 w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center text-xl animate-bounce">🤖</div>
+            <p className="text-sm md:text-xl font-black text-yellow-50 truncate italic tracking-tight">{commentary}</p>
         </div>
       </div>
     </div>
@@ -623,7 +615,6 @@ const BackupPage: React.FC = () => {
     const [isConfigured, setIsConfigured] = useState(false);
     const [activeStep, setActiveStep] = useState<ResultStep>(ResultStep.COSTUME);
     
-    // 手動資料對應新的 5 階段
     const [manualResults, setManualResults] = useState<{ [key in ResultStep]: { id: string, score: number } }>({
         [ResultStep.COSTUME]: { id: '', score: 0 },
         [ResultStep.POPULARITY]: { id: '', score: 0 },
@@ -655,7 +646,6 @@ const BackupPage: React.FC = () => {
         }));
     };
 
-    // Explicitly typing rank as 1 | 2 | 3 to satisfy SpotlightItem's prop type
     const STEPS_CONFIG: { step: ResultStep; label: string; icon: string; rank: 1 | 2 | 3 }[] = [
         { step: ResultStep.COSTUME, label: "最佳造型", icon: "🎭", rank: 1 },
         { step: ResultStep.POPULARITY, label: "最佳人氣", icon: "💖", rank: 1 },
@@ -679,44 +669,44 @@ const BackupPage: React.FC = () => {
 
     if (!isConfigured) {
         return (
-            <div className="min-h-screen bg-slate-950 text-white p-4 md:p-10">
-                <div className="max-w-4xl mx-auto">
-                    <h1 className="text-4xl font-black mb-10 text-orange-500 border-b border-orange-500/30 pb-4">手動排名模式 (對應開票看板)</h1>
+            <div className="min-h-screen bg-slate-950 text-white p-4 md:p-6 overflow-hidden">
+                <div className="max-w-4xl mx-auto h-full flex flex-col">
+                    <h1 className="text-2xl font-black mb-4 text-orange-500 border-b border-orange-500/30 pb-2">手動排名模式 (適配 1080p)</h1>
                     
-                    <div className="space-y-6">
+                    <div className="flex-1 space-y-3 overflow-y-auto pr-2 custom-scrollbar">
                         {STEPS_CONFIG.map(config => (
-                            <div key={config.step} className="glass-panel p-6 rounded-3xl border border-white/10 flex flex-col md:flex-row gap-6 items-center">
-                                <div className="shrink-0 flex items-center gap-3 w-40">
-                                    <span className="text-3xl">{config.icon}</span>
-                                    <span className="font-black text-xl">{config.label}</span>
+                            <div key={config.step} className="glass-panel p-4 rounded-2xl border border-white/10 flex flex-col md:flex-row gap-4 items-center">
+                                <div className="shrink-0 flex items-center gap-2 w-32">
+                                    <span className="text-2xl">{config.icon}</span>
+                                    <span className="font-black text-sm">{config.label}</span>
                                 </div>
                                 
                                 <select 
                                     value={manualResults[config.step].id} 
                                     onChange={(e) => updateManual(config.step, 'id', e.target.value)}
-                                    className="flex-1 bg-slate-900 border border-slate-700 rounded-2xl p-4 text-white focus:border-orange-500 outline-none w-full font-bold"
+                                    className="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-2 text-white focus:border-orange-500 outline-none w-full font-bold text-sm"
                                 >
                                     <option value="">選擇獲獎者...</option>
                                     {candidates.map(c => <option key={c.id} value={c.id}>{c.name} - {c.song}</option>)}
                                 </select>
 
-                                <div className="flex items-center gap-3 shrink-0">
-                                    <span className="text-xs text-slate-500 font-bold uppercase">分：</span>
+                                <div className="flex items-center gap-2 shrink-0">
+                                    <span className="text-[10px] text-slate-500 font-bold uppercase">分：</span>
                                     <input 
                                         type="number" 
                                         value={manualResults[config.step].score}
                                         onChange={(e) => updateManual(config.step, 'score', parseInt(e.target.value) || 0)}
-                                        className="w-24 bg-slate-900 border border-slate-700 rounded-2xl p-4 text-center font-mono font-bold text-orange-400"
+                                        className="w-20 bg-slate-900 border border-slate-700 rounded-xl p-2 text-center font-mono font-bold text-orange-400 text-sm"
                                     />
                                 </div>
                             </div>
                         ))}
                     </div>
 
-                    <div className="mt-12 flex justify-center">
+                    <div className="mt-6 flex justify-center pb-4">
                         <button 
                             onClick={() => setIsConfigured(true)}
-                            className="bg-orange-700 hover:bg-orange-600 text-white font-black py-5 px-16 rounded-2xl text-xl shadow-[0_0_30px_rgba(255,165,0,0.3)] transition-all active:scale-95"
+                            className="bg-orange-700 hover:bg-orange-600 text-white font-black py-3 px-12 rounded-xl text-lg shadow-lg transition-all active:scale-95"
                         >
                             確認並開啟聚光燈開獎頁
                         </button>
@@ -731,24 +721,22 @@ const BackupPage: React.FC = () => {
     const candidate = candidates.find(c => c.id === manualData.id);
 
     return (
-        <div className="min-h-screen bg-slate-900 text-white relative pb-60 overflow-y-auto overflow-x-hidden flex flex-col items-center">
+        <div className="min-h-screen bg-slate-900 text-white relative pb-32 overflow-hidden flex flex-col items-center">
             <Fireworks />
-            <div className="relative z-10 px-4 py-6 w-full max-w-7xl">
-                <Header size="small" subtitle="手動模式系統 (聚光燈)" />
+            <div className="relative z-10 px-4 py-2 w-full max-w-7xl h-full flex flex-col">
+                <Header size="small" subtitle="手動模式系統 (適配 1080p)" />
                 
-                <div className="flex flex-wrap justify-center gap-2 mb-10 sticky top-4 z-[100] mt-2">
+                <div className="flex flex-wrap justify-center gap-2 mb-4 sticky top-2 z-[100]">
                     {STEPS_CONFIG.map(s => (
-                        <button key={s.step} onClick={() => setActiveStep(s.step)} className={`px-4 py-3 rounded-xl font-bold text-sm md:text-xl transition-all border-2 flex items-center gap-2 ${activeStep === s.step ? 'bg-orange-700 text-white border-orange-400 shadow-[0_0_20px_rgba(255,165,0,0.5)] transform -translate-y-1' : 'bg-slate-900/80 backdrop-blur text-slate-500 border-slate-800'}`}>
+                        <button key={s.step} onClick={() => setActiveStep(s.step)} className={`px-3 py-1.5 rounded-xl font-bold text-xs md:text-sm transition-all border-2 flex items-center gap-2 ${activeStep === s.step ? 'bg-orange-700 text-white border-orange-400 shadow-[0_0_15px_rgba(255,165,0,0.4)]' : 'bg-slate-900/80 backdrop-blur text-slate-500 border-slate-800'}`}>
                             <span>{s.icon}</span>
-                            <span className="hidden md:inline">{s.label}</span>
+                            <span>{s.label}</span>
                         </button>
                     ))}
-                    <button onClick={() => setIsConfigured(false)} className="px-4 py-3 rounded-xl font-bold text-sm md:text-xl bg-red-900/50 border-2 border-red-500/50 text-red-200">
-                        重設
-                    </button>
+                    <button onClick={() => setIsConfigured(false)} className="px-3 py-1.5 rounded-xl font-bold text-xs bg-red-900/50 border-2 border-red-500/50 text-red-200">重設</button>
                 </div>
 
-                <div className="w-full min-h-[60vh] flex items-center justify-center">
+                <div className="flex-1 flex items-center justify-center overflow-hidden">
                     {candidate ? (
                         <SpotlightItem candidate={candidate} rank={currentConfig?.rank || 1} score={manualData.score} title={currentConfig?.label || ""} />
                     ) : (
@@ -757,8 +745,8 @@ const BackupPage: React.FC = () => {
                 </div>
             </div>
             
-            <div className="fixed bottom-0 left-0 w-full bg-orange-900/90 backdrop-blur-md border-t-4 border-orange-500 z-50 py-4 shadow-2xl">
-                <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-4 italic font-black text-xl md:text-3xl text-white uppercase tracking-tighter">
+            <div className="fixed bottom-0 left-0 w-full bg-orange-900/90 backdrop-blur-md border-t-2 border-orange-500 z-50 py-3 shadow-2xl">
+                <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-4 italic font-black text-xs md:text-lg text-white uppercase tracking-tighter">
                     ⚠️ MANUAL MODE ACTIVE - 手動揭曉模式 ⚠️
                 </div>
             </div>
