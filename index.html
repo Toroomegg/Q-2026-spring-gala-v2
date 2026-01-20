@@ -4,17 +4,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>2026 廣達BU1,BU11,BU15 尾牙晚宴投票系統</title>
+    <title>2026 春酒晚宴投票系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
       body {
         font-family: 'Noto Sans TC', sans-serif;
-        background-color: #0f172a;
-        background-image: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%);
+        background-color: #020617;
+        /* 使用者指定的高品質主視覺背景圖 */
+        background-image: 
+          linear-gradient(rgba(2, 6, 23, 0.75), rgba(2, 6, 23, 0.75)), 
+          url('https://storage.googleapis.com/example-eggy-addressable/DownloadFile/BG.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
         color: white;
         overflow-x: hidden;
+        min-height: 100vh;
       }
+      
       /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 6px;
@@ -32,9 +41,9 @@
       }
       
       .glass-panel {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 

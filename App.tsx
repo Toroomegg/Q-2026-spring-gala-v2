@@ -156,7 +156,7 @@ const GamePage: React.FC = () => {
     }, []);
 
     return (
-        <div className="h-screen w-full flex flex-col overflow-hidden bg-slate-950 relative">
+        <div className="h-screen w-full flex flex-col overflow-hidden bg-transparent relative">
             <Fireworks />
             
             <style>
@@ -174,9 +174,7 @@ const GamePage: React.FC = () => {
                 `}
             </style>
             
-            {/* 上半部：Logo (需求: 站畫面 1/5) + 遊戲規則 */}
             <div className="flex-1 flex flex-col items-center justify-start p-2 md:p-4 relative z-10 overflow-hidden">
-                {/* 需求: 頂部 Logo 視覺強化 (站畫面高度 15vh 以適配 1080p) */}
                 <div className="h-[15vh] w-full flex items-center justify-center mb-4 animate-fade-in-down">
                     <img 
                         src="https://storage.googleapis.com/example-eggy-addressable/DownloadFile/2026Slogan.png" 
@@ -233,10 +231,8 @@ const GamePage: React.FC = () => {
                 </div>
             </div>
 
-            {/* 需求: 縮減區塊間隙以適配 1080p */}
             <div className="h-6 w-full flex-none"></div>
 
-            {/* 下半部：參賽者跑馬燈 */}
             <div className="h-40 bg-slate-900/70 backdrop-blur-2xl border-t border-white/10 flex items-center relative z-20 overflow-hidden">
                 <div className="absolute top-0 left-0 h-full w-20 bg-gradient-to-r from-slate-950 to-transparent z-30 pointer-events-none"></div>
                 <div className="absolute top-0 right-0 h-full w-20 bg-gradient-to-l from-slate-950 to-transparent z-30 pointer-events-none"></div>
@@ -343,7 +339,7 @@ const VotePage: React.FC = () => {
 
   if (justVoted || (hasVoted && !isGlobalTestMode)) {
       return (
-          <div className="min-h-screen flex flex-col items-center justify-center px-4 relative z-10">
+          <div className="min-h-screen flex flex-col items-center justify-center px-4 relative z-10 bg-transparent">
               <Fireworks />
               <div className="glass-panel p-10 rounded-3xl text-center max-w-md border border-green-500/50 shadow-2xl animate-scale-up">
                   <div className="text-7xl mb-6">✅</div>
@@ -369,7 +365,7 @@ const VotePage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen pb-64 px-2 md:px-4 relative z-10 pt-4">
+    <div className="min-h-screen pb-64 px-2 md:px-4 relative z-10 pt-4 bg-transparent">
       <Header subtitle={isVotingOpen ? "歌唱大賽評分系統" : "參賽名單預覽"} size="small" />
       
       {!isVotingOpen && (
@@ -559,7 +555,7 @@ const ResultsPage: React.FC = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-transparent px-4">
         <ConfirmModal isOpen={errorModal.isOpen} title="登入錯誤" message={errorModal.msg} onConfirm={() => setErrorModal({isOpen:false, msg:''})} showCancel={false} isDangerous />
         <form onSubmit={handleLogin} className="glass-panel p-8 rounded-2xl w-full max-w-md border border-slate-700">
           <h2 className="text-2xl font-bold text-center mb-6 text-white">開票控制台登入</h2>
@@ -571,14 +567,13 @@ const ResultsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white relative pb-32 overflow-hidden flex flex-col items-center">
+    <div className="min-h-screen bg-transparent text-white relative pb-32 overflow-hidden flex flex-col items-center">
       <Fireworks />
       <ConfirmModal isOpen={confirmStep.isOpen} title="切換環節" message={`確定揭曉下一階段嗎？`} onConfirm={() => { if (confirmStep.target) setActiveStep(confirmStep.target); setConfirmStep({isOpen: false, target: null}); }} onCancel={() => setConfirmStep({isOpen: false, target: null})} />
       
       <div className="relative z-10 px-4 py-2 w-full max-w-7xl h-full flex flex-col">
         <Header size="small" subtitle="即時戰況揭曉" />
         
-        {/* 縮減導覽按鈕高度 */}
         <div className="flex flex-wrap justify-center gap-2 mb-4 sticky top-2 z-[100]">
             {STEPS_CONFIG.map(s => (
                 <button key={s.step} onClick={() => { if (s.step !== activeStep) setConfirmStep({ isOpen: true, target: s.step }); }} className={`px-3 py-1.5 rounded-xl font-bold text-xs md:text-sm transition-all border-2 flex items-center gap-2 ${activeStep === s.step ? 'bg-yellow-600 text-white border-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.4)]' : 'bg-slate-900/80 backdrop-blur text-slate-500 border-slate-800'}`}>
@@ -588,13 +583,11 @@ const ResultsPage: React.FC = () => {
             ))}
         </div>
 
-        {/* 聚光燈顯示區域 */}
         <div className="flex-1 flex items-center justify-center overflow-hidden">
             {current && <SpotlightItem candidate={current.candidate} rank={current.rank} score={current.score || 0} title={current.title} />}
         </div>
       </div>
 
-      {/* 底部 AI 評語欄 */}
       <div className="fixed bottom-0 left-0 w-full bg-slate-900/90 backdrop-blur-md border-t-2 border-yellow-500 z-50 py-3 shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 flex items-center gap-4">
             <div className="shrink-0 w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center text-xl animate-bounce">🤖</div>
@@ -656,7 +649,7 @@ const BackupPage: React.FC = () => {
 
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-900 px-4">
+            <div className="min-h-screen flex items-center justify-center bg-transparent px-4">
                 <form onSubmit={handleLogin} className="glass-panel p-8 rounded-2xl w-full max-w-md border border-slate-700">
                     <h2 className="text-2xl font-bold text-center mb-6 text-white">手動模式登入驗證</h2>
                     {loginError && <div className="bg-red-900/50 border border-red-500 text-red-200 p-3 rounded-lg text-sm mb-4 text-center">{loginError}</div>}
@@ -669,7 +662,7 @@ const BackupPage: React.FC = () => {
 
     if (!isConfigured) {
         return (
-            <div className="min-h-screen bg-slate-950 text-white p-4 md:p-6 overflow-hidden">
+            <div className="min-h-screen bg-transparent text-white p-4 md:p-6 overflow-hidden">
                 <div className="max-w-4xl mx-auto h-full flex flex-col">
                     <h1 className="text-2xl font-black mb-4 text-orange-500 border-b border-orange-500/30 pb-2">手動排名模式 (適配 1080p)</h1>
                     
@@ -721,7 +714,7 @@ const BackupPage: React.FC = () => {
     const candidate = candidates.find(c => c.id === manualData.id);
 
     return (
-        <div className="min-h-screen bg-slate-900 text-white relative pb-32 overflow-hidden flex flex-col items-center">
+        <div className="min-h-screen bg-transparent text-white relative pb-32 overflow-hidden flex flex-col items-center">
             <Fireworks />
             <div className="relative z-10 px-4 py-2 w-full max-w-7xl h-full flex flex-col">
                 <Header size="small" subtitle="手動模式系統 (適配 1080p)" />
@@ -807,7 +800,7 @@ const AdminPage: React.FC = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-transparent px-4">
         <ConfirmModal isOpen={loginErrorModal.isOpen} title="登入錯誤" message={loginErrorModal.msg} onConfirm={() => setLoginErrorModal({isOpen:false, msg:''})} showCancel={false} isDangerous />
         <form onSubmit={handleLogin} className="glass-panel p-8 rounded-2xl w-full max-w-md border border-slate-700">
           <h2 className="text-2xl font-bold text-center mb-6 text-white">系統管理後台</h2>
@@ -819,7 +812,7 @@ const AdminPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a] p-4 md:p-10 text-white font-sans overflow-x-hidden pb-32">
+    <div className="min-h-screen bg-transparent p-4 md:p-10 text-white font-sans overflow-x-hidden pb-32">
       <ConfirmModal isOpen={confirmModal.isOpen} title={confirmModal.title} message={confirmModal.message} onConfirm={confirmModal.onConfirm} onCancel={() => setConfirmModal(prev => ({...prev, isOpen: false}))} isDangerous={confirmModal.isDangerous} />
       <ConfirmModal isOpen={apiModal.isOpen} title="連線診斷結果" message={apiModal.msg} onConfirm={() => setApiModal({isOpen:false, msg:''})} showCancel={false} />
       

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 
 const Fireworks: React.FC = () => {
@@ -41,14 +42,14 @@ const Fireworks: React.FC = () => {
       update() {
         this.x += this.vx;
         this.y += this.vy;
-        this.alpha -= 0.02;
+        this.alpha -= 0.015; // 稍微減慢淡出速度以增加華麗感
       }
 
       draw(ctx: CanvasRenderingContext2D) {
         ctx.globalAlpha = this.alpha;
         ctx.fillStyle = this.color;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+        ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
         ctx.fill();
         ctx.globalAlpha = 1;
       }
@@ -57,17 +58,22 @@ const Fireworks: React.FC = () => {
     const createFirework = () => {
       const x = Math.random() * canvas.width;
       const y = Math.random() * (canvas.height / 2);
-      const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
+      const color = `hsl(${Math.random() * 360}, 70%, 60%)`;
       for (let i = 0; i < 30; i++) {
         particles.push(new Particle(x, y, color));
       }
     };
 
     const animate = () => {
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.2)'; // Trail effect
+      // 關鍵修改：使用 destination-out 來淡出舊的像素，而不是填滿實色，這樣背景圖才不會被擋住
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; // 數值越大拖尾越短
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // 切換回正常的繪製模式
+      ctx.globalCompositeOperation = 'source-over';
 
-      if (Math.random() < 0.05) createFirework();
+      if (Math.random() < 0.04) createFirework();
 
       particles.forEach((p, index) => {
         p.update();
